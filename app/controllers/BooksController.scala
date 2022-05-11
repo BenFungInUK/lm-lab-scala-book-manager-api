@@ -1,8 +1,9 @@
 package controllers
 
 import models.Book
-import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Result}
 import play.api.libs.json._
+import play.mvc.{Results}
 import repositories.BookRepository
 
 import javax.inject.{Inject, Singleton}
@@ -19,7 +20,9 @@ class BooksController @Inject()(val controllerComponents: ControllerComponents, 
     dataRepository.getBook(bookId) foreach { book =>
       bookToReturn = book
     }
-    Ok(Json.toJson(bookToReturn))
+
+    if (bookToReturn != null) Ok(Json.toJson(bookToReturn))
+    else NotFound(Json.toJson(s"The book with Id: $bookId is NOT FOUND!"))
   }
 
   def addBook() : Action[AnyContent] = Action {
@@ -35,14 +38,14 @@ class BooksController @Inject()(val controllerComponents: ControllerComponents, 
         )
 
       val savedBook: Option[Book] = dataRepository.addBook(bookItem.get)
-      Created(Json.toJson(savedBook))
+
+      if (savedBook.isDefined) Created(Json.toJson(savedBook))
+      else Conflict(Json.toJson(s"The book with Id: ${bookItem.get.id} is already exist!"))
     }
   }
 
   def deleteBook(bookId: Long): Action[AnyContent] = Action {
-    if (dataRepository.deleteBook(bookId).getOrElse(false))
-      NoContent
-    else
-      NotFound(Json.toJson(bookId))
+    if (dataRepository.deleteBook(bookId).getOrElse(false)) NoContent
+    else NotFound(Json.toJson(s"The book with Id: $bookId is NOT FOUND!"))
   }
 }
