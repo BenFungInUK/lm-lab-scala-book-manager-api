@@ -1,8 +1,5 @@
 package controllers
 
-import play.api.data.Form
-import play.api.data.Forms.mapping
-
 import javax.inject._
 import play.api.mvc._
 
@@ -20,7 +17,6 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    * will be called when the application receives a `GET` request with
    * a path of `/`.
    */
-
   def index() = Action { implicit request: Request[AnyContent] =>
     Ok(views.html.index())
   }

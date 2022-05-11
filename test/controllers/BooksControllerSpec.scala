@@ -63,18 +63,6 @@ class BooksControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
       status(book) mustBe OK
       contentType(book) mustBe Some("application/json")
     }
-
-    "return 404 NotFound for single book request" in {
-
-      // Here we utilise Mockito for stubbing the request to getBook
-      when(mockDataService.getBook(1)) thenReturn None
-
-      val controller = new BooksController(stubControllerComponents(), mockDataService)
-      val book = controller.getBook(1).apply(FakeRequest(GET, "/books/1"))
-
-      status(book) mustBe NOT_FOUND
-      contentType(book) mustBe Some("application/json")
-    }
   }
 
   "BooksController POST addBook" should {
@@ -92,20 +80,6 @@ class BooksControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
       status(book) mustBe CREATED
       contentType(book) mustBe Some("application/json")
     }
-
-    "return 409 Conflict for adding an existing book" in {
-
-      // Here we utilise Mockito for stubbing the request to addBook
-      when(mockDataService.addBook(any())) thenReturn None
-
-
-      val controller = new BooksController(stubControllerComponents(), mockDataService)
-      val book = controller.addBook().apply(
-        FakeRequest(POST, "/books").withJsonBody(Json.toJson(sampleBook)))
-
-      status(book) mustBe CONFLICT
-      contentType(book) mustBe Some("application/json")
-    }
   }
 
   "BooksController DELETE deleteBook" should {
@@ -121,19 +95,6 @@ class BooksControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
 
       status(book) mustBe NO_CONTENT
       contentType(book) mustBe None
-    }
-
-    "return 404 NotFound for deleting a non-existing book" in {
-
-      // Here we utilise Mockito for stubbing the request to addBook
-      when(mockDataService.deleteBook(any())) thenReturn None
-
-
-      val controller = new BooksController(stubControllerComponents(), mockDataService)
-      val book = controller.deleteBook(1).apply(FakeRequest(DELETE, "/books/1"))
-
-      status(book) mustBe NOT_FOUND
-      contentType(book) mustBe Some("application/json")
     }
   }
 }
