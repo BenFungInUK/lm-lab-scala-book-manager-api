@@ -40,4 +40,13 @@ class BookRepository {
     }
   }
 
+  def deleteBook(bookId: Long): Option[Boolean] = {
+    getBook(bookId) match {
+      case Some(book) => {
+        bookList.remove(book)
+        Some(true)
+      }
+      case _ => None
+    }
+  }
 }
